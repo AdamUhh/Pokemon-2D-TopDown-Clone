@@ -6,12 +6,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokemon Clone</title>
     <link href="index.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <canvas></canvas>
+    <div class="container">
+      <div class="overlay" id="overlappingDiv"></div>
+      <div id="clickToPlayOverlay">Click For Audio!</div>
+      
+      <canvas></canvas>
+
+      <div id="userInterface">
+        <div class="healthbar_container">
+          <h1>Draggle</h1>
+          <div class="healthbar_wrapper">
+            <div class="healthbar_background"></div>
+            <div id="enemyHealthBar" class="healthbar"></div>
+          </div>
+        </div>
+        <div class="healthbar_container emby">
+          <h1>Emby</h1>
+          <div class="healthbar_wrapper">
+            <div class="healthbar_background"></div>
+            <div id="playerHealthBar" class="healthbar"></div>
+          </div>
+        </div>
+        <div class="battle_wrapper">
+          <div id="dialogueBox" class="dialogue_container"></div>
+          <div id="attacksBox" class="attack_wrapper"></div>
+          <div id="AttackType" class="secondary_wrapper">
+            <h1>Attack Type</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
+      integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+      integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="data/audio.js"></script>
     <script src="data/battlezones.js"></script>
     <script src="data/collisions.js"></script>
+    <script src="data/attacks.js"></script>
+    <script src="data/monsters.js"></script>
     <script src="classes.js"></script>
     <script src="index.js"></script>
+    <script src="battleScene.js"></script>
   </body>
 </html>

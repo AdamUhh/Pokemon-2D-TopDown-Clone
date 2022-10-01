@@ -64,7 +64,7 @@ playerDownImage.src = "./img/playerDown.png";
 const player = new Sprite({
   position: { x: canvas.width / 2 - 192 / 2, y: canvas.height / 2 - 68 / 2 },
   image: playerDownImage,
-  frames: { max: 4 },
+  frames: { max: 4, hold: 10 },
   sprites: {
     up: playerUpImage,
     left: playerLeftImage,
@@ -98,7 +98,7 @@ const battle = {
 };
 
 function animate() {
-  window.requestAnimationFrame(animate);
+  const animationId = window.requestAnimationFrame(animate);
   background.draw();
 
   boundaries.forEach((boundary) => {
@@ -111,7 +111,7 @@ function animate() {
   foreground.draw();
 
   let moving = true;
-  player.moving = false;
+  player.animate = false;
 
   if (battle.initiated) return;
 
@@ -129,19 +129,46 @@ function animate() {
       if (
         rectangularCollision(player, battleZone) &&
         overlappingArea > (player.width * player.height) / 1.9 &&
-        Math.random() < 0.01
+        Math.random() < 0.05
       ) {
-        console.log("BATTLE!");
+        // ? deactivate current requestAnimation loop
+        window.cancelAnimationFrame(animationId);
+
+        audio.Map.stop();
+        audio.initBattle.play();
+        audio.battle.play();
         battle.initiated = true;
+
+        gsap.to("#overlappingDiv", {
+          opacity: 1,
+          repeat: 3,
+          yoyo: true,
+          duration: 0.4,
+          onComplete() {
+            gsap.to("#overlappingDiv", {
+              opacity: 1,
+              duration: 0.4,
+              onComplete() {
+                // ? activate new requestAnimation loop
+                initBattle();
+                animateBattle();
+                gsap.to("#overlappingDiv", {
+                  opacity: 0,
+                  duration: 0.4,
+                });
+              },
+            });
+          },
+        });
+
         break;
       }
     }
   }
 
   // ? player movement
-
   if (keys.w.pressed && lastKey === "w") {
-    player.moving = true;
+    player.animate = true;
     player.image = player.sprites.up;
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i];
@@ -159,7 +186,7 @@ function animate() {
 
     if (moving) movables.forEach((movable) => (movable.position.y += background.velocity));
   } else if (keys.s.pressed && lastKey === "s") {
-    player.moving = true;
+    player.animate = true;
     player.image = player.sprites.down;
 
     for (let i = 0; i < boundaries.length; i++) {
@@ -177,7 +204,7 @@ function animate() {
     }
     if (moving) movables.forEach((movable) => (movable.position.y -= background.velocity));
   } else if (keys.a.pressed && lastKey === "a") {
-    player.moving = true;
+    player.animate = true;
     player.image = player.sprites.left;
 
     for (let i = 0; i < boundaries.length; i++) {
@@ -195,7 +222,7 @@ function animate() {
     }
     if (moving) movables.forEach((movable) => (movable.position.x += background.velocity));
   } else if (keys.d.pressed && lastKey === "d") {
-    player.moving = true;
+    player.animate = true;
     player.image = player.sprites.right;
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i];
@@ -214,7 +241,6 @@ function animate() {
     if (moving) movables.forEach((movable) => (movable.position.x -= background.velocity));
   }
 }
-animate();
 
 let lastKey = "";
 window.addEventListener("keydown", (evt) => {
@@ -256,5 +282,14 @@ window.addEventListener("keyup", (evt) => {
       break;
     default:
       break;
+  }
+});
+
+let clicked = false;
+addEventListener("click", () => {
+  if (!clicked) {
+    document.querySelector("#clickToPlayOverlay").style.display = "none";
+    audio.Map.play();
+    clicked = true;
   }
 });
